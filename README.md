@@ -3,14 +3,22 @@
 Türkiye odaklı, güvenli nesiller arası ev paylaşımı platformu.
 
 ## Canlı pilot
-https://eyiflkmadiaurzzwring.supabase.co/functions/v1/nesilev-web
+- Aktif uygulama: https://eyiflkmadiaurzzwring.supabase.co/functions/v1/nesilev-web
+- GitHub Pages hedefi: https://saygilicihan4-lgtm.github.io/NesilEv/
+
+## GitHub Pages
+Repo içindeki `.github/workflows/pages.yml` production yayınına hazırdır.
+GitHub repo ayarlarında **Settings → Pages → Source → GitHub Actions** seçildiğinde workflow yeniden çalıştırılabilir.
 
 ## Durum
 - Supabase backend: canlı
-- RLS: aktif
+- RLS / security advisor: temiz
 - Moderation Edge Function: aktif
 - Public pilot web: aktif
-- Erken erişim başvuruları: pilot_waitlist tablosuna kaydediliyor
+- GitHub kaynak deposu: senkron
+- GitHub Pages frontend: `site/index.html`
+- Erken erişim API: `waitlist` Edge Function
+- Erken erişim başvuruları: `pilot_waitlist`
 - Güvenlik sınırları: tıbbi bakım, kişisel bakım ve finansal işlemler yasak
 
-Bu repo NesilEv'in canlı pilot kaynak kodunu tutar.
+Secret/service-role anahtarları repoya yazılmaz.
