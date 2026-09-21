@@ -15,7 +15,8 @@ const h = (s: unknown) => String(s ?? "")
   .replaceAll("'", "&#039;");
 
 const headers = {
-  "Content-Type": "text/html; charset=utf-8",
+  "Content-Type": "text/html; charset=UTF-8",
+  "Content-Disposition": "inline",
   "Cache-Control": "no-store",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
@@ -172,7 +173,12 @@ Deno.serve(async (req) => {
         headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
       });
     }
-    return new Response(await page(), { headers });
+    const html = await page();
+    const bytes = new TextEncoder().encode(html);
+    return new Response(bytes, {
+      status: 200,
+      headers: new Headers(headers),
+    });
   }
 
   if (req.method === "POST") {
