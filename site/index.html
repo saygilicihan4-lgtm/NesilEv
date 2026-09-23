@@ -55,7 +55,7 @@
     </section>
 
     <div class="stats">
-      <div class="stat"><strong>30+ gün</strong><span>uzun dönem konaklama odağı</span></div>
+      <div class="stat"><strong>101+ gün</strong><span>uzun dönem konaklama odağı</span></div>
       <div class="stat"><strong>≤ %30</strong><span>destek karşılığı kira indirimi sınırı</span></div>
       <div class="stat"><strong>≤ 5 saat</strong><span>haftalık düşük riskli destek sınırı</span></div>
     </div>
@@ -82,7 +82,7 @@
           <div class="pill">3 · Güvenlik</div>
           <h3>Kurallar baştan net</h3>
           <p>İlan, başvuru, mesajlaşma, engelleme, şikâyet ve doğrulama akışları güvenlik katmanlarıyla tasarlanır.</p>
-          <div class="metric"><strong>30+ gün</strong><span> minimum konaklama</span></div>
+          <div class="metric"><strong>101+ gün</strong><span> minimum konaklama</span></div>
         </article>
       </div>
     </section>
@@ -112,52 +112,20 @@
       <div>
         <div class="pill">Erken erişim</div>
         <h2>İlk kullanıcılar arasında yer al.</h2>
-        <p>Canlı kayıt altyapısı yeniden aktifleştiriliyor. Sayfa artık GitHub üzerinden normal web sitesi olarak yayınlanacak; backend açılır açılmaz bu form da otomatik olarak kayıt almaya başlayacak.</p>
+        <p>Bu sayfa uyumlu pilot yedeğidir. Gerçek kiralama/eşleşme henüz açık değildir; erken erişim başvuruları production sitesinde alınır.</p>
       </div>
 
-      <form class="form" id="waitlist">
-        <div class="notice" id="infraNotice">Kayıt servisi şu anda bakımda. Bilgilerini doldurabilirsin; gönderim servis aktif olduğunda çalışacak.</div>
-        <div class="two">
-          <div class="field"><label>Adın</label><input name="name" minlength="2" maxlength="80" required placeholder="Ad Soyad"></div>
-          <div class="field"><label>E-posta</label><input name="email" type="email" maxlength="320" required placeholder="ornek@mail.com"></div>
-        </div>
-        <div class="two">
-          <div class="field"><label>Nasıl katılmak istiyorsun?</label><select name="role" required><option value="seeker">Oda arıyorum</option><option value="host">Evimde oda var</option><option value="both">İkisi de olabilir</option></select></div>
-          <div class="field"><label>Şehir</label><input name="city" maxlength="80" value="İstanbul" required></div>
-        </div>
-        <div class="field"><label>Kısa not</label><textarea name="note" maxlength="800" placeholder="İlçe, bütçe veya beklentini kısaca yazabilirsin."></textarea></div>
-        <input name="website" tabindex="-1" autocomplete="off" style="display:none">
-        <button class="btn primary" type="submit">Erken erişime katıl</button>
-        <div class="msg" id="msg"></div>
-      </form>
+      <div class="form">
+        <div class="notice">Pilot şu anda yalnız erken erişim topluyor. Gerçek eşleşme, ödeme ve sözleşme akışları hukuk incelemesi tamamlanana kadar kapalıdır.</div>
+        <p style="margin:0 0 16px;color:var(--muted);line-height:1.6">Türkiye pilotunda ürün kuralı 101+ gün olarak ele alınır. Başvurunu production NesilEv sitesinden bırakabilirsin.</p>
+        <a class="btn primary" href="https://nesilev.lovable.app" rel="noopener">Production siteye git</a>
+      </div>
     </section>
   </main>
 
   <footer>NesilEv · Kontrollü pilot · Bu sürüm konaklama veya bakım hizmeti taahhüdü vermez; başvurular pilot değerlendirmesine alınır.</footer>
 </div>
 
-<script>
-const API='https://eyiflkmadiaurzzwring.supabase.co/functions/v1/pilot-waitlist';
-const form=document.getElementById('waitlist');
-const msg=document.getElementById('msg');
 
-form.addEventListener('submit',async(e)=>{
-  e.preventDefault();
-  msg.style.display='none';
-  const body=Object.fromEntries(new FormData(form).entries());
-  try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const j=await r.json().catch(()=>({}));
-    msg.className='msg '+(r.ok?'ok':'err');
-    msg.textContent=r.ok?'Başvurun alındı. Pilot açıldığında sana haber vereceğiz.':(j.error||'Kayıt servisi şu an bakımda. Biraz sonra tekrar dene.');
-    msg.style.display='block';
-    if(r.ok){form.reset();form.city.value='İstanbul';document.getElementById('infraNotice').style.display='none'}
-  }catch{
-    msg.className='msg err';
-    msg.textContent='Kayıt servisi şu an bakımda. Sayfa çalışıyor; backend yeniden aktifleştirildiğinde kayıt da açılacak.';
-    msg.style.display='block';
-  }
-});
-</script>
 </body>
 </html>
