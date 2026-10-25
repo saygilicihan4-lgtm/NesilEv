@@ -20,7 +20,9 @@
     .join{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;align-items:start}.join h2{font-size:44px;letter-spacing:-2px;margin:0}.join p{color:var(--muted);line-height:1.6}.form{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:24px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px;margin-bottom:12px}.field label{font-size:13px;font-weight:850}.field input,.field select,.field textarea{width:100%;border:1px solid #cfd9d3;background:white;border-radius:12px;padding:13px;font:inherit;color:var(--ink)}.field textarea{min-height:90px;resize:vertical}.form button{width:100%;margin-top:5px}.msg{display:none;margin-top:12px;padding:12px;border-radius:12px;font-size:14px}.ok{background:#dff3e9;color:#1f5d47}.err{background:#f8ded4;color:#813c27}.notice{background:#fff2d8;border:1px solid #edd29b;border-radius:14px;padding:13px 15px;color:#77551d;font-size:14px;line-height:1.5;margin-bottom:14px}
     footer{border-top:1px solid var(--line);padding:28px 0 42px;color:var(--muted);font-size:13px}
     @media(max-width:840px){.hero,.join,.safety{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.two{grid-template-columns:1fr}h1{letter-spacing:-2.5px}.navtag{display:none}}
-  </style>
+  
+    .form .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form .field{margin:12px 0}.form label{display:block;font-weight:750;margin-bottom:7px}.form input,.form select,.form textarea{width:100%;padding:13px;border-radius:12px;border:1px solid #cad8d0;background:white;color:#18352f;font:inherit}.form textarea{min-height:92px;resize:vertical}.formStatus{min-height:24px;font-size:14px;font-weight:700;padding:9px 0}.formStatus.ok{color:#17664e}.formStatus.error{color:#9b3529}.form button:disabled{opacity:.65;cursor:wait}@media(max-width:680px){.form .two{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -110,16 +112,25 @@
 
     <section id="katil" class="join">
       <div>
-        <div class="pill">Erken erişim</div>
+        <div class="pill">ERKEN ERİŞİM · İSTANBUL</div>
         <h2>İlk kullanıcılar arasında yer al.</h2>
-        <p>Bu sayfa uyumlu pilot yedeğidir. Gerçek kiralama/eşleşme henüz açık değildir; erken erişim başvuruları production sitesinde alınır.</p>
+        <p>NesilEv kontrollü pilot aşamasında. Ön kayıt ücretsizdir. Kimlik doğrulaması, konaklama ve eşleşme henüz otomatik açılmamıştır.</p>
       </div>
-
-      <div class="form">
-        <div class="notice">Pilot şu anda yalnız erken erişim topluyor. Gerçek eşleşme, ödeme ve sözleşme akışları hukuk incelemesi tamamlanana kadar kapalıdır.</div>
-        <p style="margin:0 0 16px;color:var(--muted);line-height:1.6">Türkiye pilotunda ürün kuralı 101+ gün olarak ele alınır. Başvurunu production NesilEv sitesinden bırakabilirsin.</p>
-        <a class="btn primary" href="https://nesilev.lovable.app" rel="noopener">Production siteye git</a>
-      </div>
+      <form class="form" id="waitlist">
+        <div class="notice">Yalnızca yetişkinler (18+). Başvuru, kesin eşleşme veya oda garantisi değildir. Tıbbi veya kişisel bakım hizmeti sunulmaz.</div>
+        <div class="two">
+          <div class="field"><label for="person">Ad Soyad</label><input id="person" name="name" minlength="2" maxlength="80" autocomplete="name" required placeholder="Adın ve soyadın"></div>
+          <div class="field"><label for="email">E-posta</label><input id="email" name="email" type="email" maxlength="320" autocomplete="email" required placeholder="ornek@mail.com"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="role">Katılım türü</label><select id="role" name="role" required><option value="seeker">Oda arıyorum</option><option value="host">Odamı paylaşabilirim</option><option value="both">Her ikisi</option></select></div>
+          <div class="field"><label for="city">Şehir</label><input id="city" name="city" maxlength="80" value="İstanbul" required></div>
+        </div>
+        <div class="field"><label for="note">Kısa not (isteğe bağlı)</label><textarea id="note" name="note" maxlength="800" placeholder="Bütçe, ilçe veya aradığın oda hakkında kısa bilgi"></textarea></div>
+        <button class="btn primary" type="submit" id="submitBtn">Erken erişime katıl</button>
+        <div id="formStatus" class="formStatus" role="status" aria-live="polite"></div>
+        <small>Bilgilerin yalnızca pilot başvurusunu değerlendirmek ve sana dönüş yapmak için alınır.</small>
+      </form>
     </section>
   </main>
 
@@ -127,5 +138,20 @@
 </div>
 
 
+
+<script>
+const waitlist=document.getElementById('waitlist'),status=document.getElementById('formStatus'),send=document.getElementById('submitBtn');
+waitlist.addEventListener('submit',async ev=>{
+ ev.preventDefault(); send.disabled=true; status.className='formStatus'; status.textContent='Başvuru gönderiliyor…';
+ const data=Object.fromEntries(new FormData(waitlist).entries());
+ try {
+  const r=await fetch('https://eyiflkmadiaurzzwring.supabase.co/functions/v1/nesilev-web',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  const result=await r.json();
+  if(!r.ok)throw Error(result.error||'Başvuru kaydedilemedi.');
+  status.className='formStatus ok';status.textContent='Başvurun alındı! Pilot programla ilgili e-postanı kontrol edebilirsin.';waitlist.reset();
+ }catch(err){status.className='formStatus error';status.textContent=err.message||'Bağlantı hatası. Tekrar dene.';}
+ finally{send.disabled=false;}
+});
+</script>
 </body>
 </html>
